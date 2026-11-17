@@ -91,13 +91,31 @@ uvicorn app.main:app --reload
 
 A documentação interativa fica em `http://localhost:8000/docs`.
 
+### Front-end
+
+O front (React + Vite) já funciona sozinho, sem a API: sem `VITE_API_URL`, ele usa dados simulados no navegador (modo demonstração).
+
+```bash
+cd frontend
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+Abra `http://localhost:5173`. Para usar a API de verdade, copie `frontend/.env.example` para `frontend/.env` e preencha `VITE_API_URL=http://localhost:8000`. Os detalhes do front e o contrato esperado da API estão em [`frontend/README.md`](frontend/README.md).
+
 ### Variáveis de ambiente
 
 | Variável | Onde | Para quê |
 |---|---|---|
 | `DATABASE_URL` | API | String de conexão do PostgreSQL (Neon, com `sslmode=require`) |
 | `ALLOWED_ORIGINS` | API | Endereços do front liberados no CORS, separados por vírgula |
-| `API_URL` | Front | Endereço da API publicada no Render |
+| `VITE_API_URL` | Front | Endereço da API (local ou do Render). Se ficar vazio, o front roda em modo demonstração, com dados simulados |
 
 Não versione arquivos `.env` nem senhas.
 
@@ -110,7 +128,7 @@ Ordem recomendada: **banco → API → front**.
    - Build: `pip install -r requirements.txt`
    - Start: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
    - Variáveis: `DATABASE_URL` e `ALLOWED_ORIGINS` (o endereço do front na Vercel).
-3. **Front (Vercel):** importe este repositório, defina **Root Directory** como `frontend` e configure o endereço da API (`API_URL`).
+3. **Front (Vercel):** importe este repositório, defina **Root Directory** como `frontend` (a Vercel reconhece o Vite sozinha) e cadastre a variável `VITE_API_URL` com o endereço da API no Render. O arquivo `frontend/vercel.json` já faz as rotas do React funcionarem ao recarregar a página.
 4. **CORS:** depois de publicar o front, coloque o endereço dele em `ALLOWED_ORIGINS` na API.
 
 Cuidados com os planos gratuitos:
